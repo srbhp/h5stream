@@ -1,4 +1,4 @@
-#include "hdf5IO.hpp"
+#include "h5stream.hpp"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -16,9 +16,9 @@ int main()
   auto dspace = file.get_dataspace("matrix");
   dspace.write_atr<double>(1.2, "Units");
 
-  //Read data from the file
+  // Read data from the file
   auto xx = file.read_vector<double>("matrix");
-  //OR
+  // OR
   file.read_vector<double>(xx, "matrix");
   // Read Attribute
   double x = 0;
@@ -26,6 +26,5 @@ int main()
   std::cout << "Attribute : " << x << std::endl;
   std::cout << "HDF file size (MB): " << file.file_size() << std::endl;
 
-  // Use of operator []
   return 0;
 }
