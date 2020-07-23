@@ -2,10 +2,10 @@
 Header only library for HDF5 input/output
 
 
-### Example 
+### Example
 
 ```
-#include "hdf5IO.hpp"
+#include "h5stream.hpp"
 #include <iostream>
 #include <string>
 #include <vector>
