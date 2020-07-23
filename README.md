@@ -1,4 +1,4 @@
-# h5stream
+# [h5stream](https://github.com/srbhp/h5stream)
 Header only library for HDF5 input/output
 
 
