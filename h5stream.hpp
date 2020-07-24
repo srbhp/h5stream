@@ -17,7 +17,7 @@
 #include "H5Cpp.h"
 #include <iostream>
 #include <string>
-#include <vector>
+//#include <vector>
 
 // Maps C++ type to HDF5 type
 template <typename T>
@@ -124,15 +124,16 @@ class h5stream {
   h5stream();
   h5stream(const std::string& fileName, const std::string& rw = "rw");
   void setFileName(const H5std_string& fileName, const std::string& rw = "rw");
-  template <typename T>
-  dspace write_vector(const std::vector<T>& data,
-      const H5std_string& datasetName);
-  template <typename T>
-  std::vector<T> read_vector(const H5std_string& datasetName);
-  template <typename T>
-  dspace read_vector(std::vector<T>& data, const H5std_string& datasetName)
+  template <typename T, template <typename> class vec>
+  dspace write(const vec<T>& data, const H5std_string& datasetName);
+
+  template <typename T, template <typename> class vec>
+  vec<T> read(const H5std_string& datasetName);
+
+  template <typename T, template <typename> class vec>
+  void read(vec<T>& data, const H5std_string& datasetName)
   {
-    data = read_vector<T>(datasetName);
+    data = read<T, vec>(datasetName);
   };
 
   double file_size() { return hdf5File.getFileSize() / (1024 * 1024.); }
@@ -140,19 +141,6 @@ class h5stream {
   {
     return dspace(hdf5File.openDataSet(dataset_name));
   }
-  //--------------------------------------------------------------
-  /*
-  void
-  operator<<(std::pair<const std::string&, const std::vector<double>&> data)
-  {
-    write_vector<double>(data.second, data.first);
-  }
-
-  void operator>>(std::pair<const std::string&, std::vector<double>> data)
-  {
-    read_vector<double>(data.second, data.first);
-  }
-  */
 };
 void h5stream::setFileName(const H5std_string& fileName,
     const std::string& rw)
@@ -178,9 +166,8 @@ h5stream::h5stream(const std::string& fileName, const std::string& rw)
   setFileName(fileName, rw);
 }
 
-template <typename T>
-dspace h5stream::write_vector(const std::vector<T>& data,
-    const H5std_string& datasetName)
+template <typename T, template <typename> class vec>
+dspace h5stream::write(const vec<T>& data, const H5std_string& datasetName)
 {
   try {
     H5::Exception::dontPrint();
@@ -205,10 +192,10 @@ dspace h5stream::write_vector(const std::vector<T>& data,
   }
 }
 
-template <typename T>
-std::vector<T> h5stream::read_vector(const H5std_string& dataset_name)
+template <typename T, template <typename> class vec>
+vec<T> h5stream::read(const H5std_string& dataset_name)
 {
-  std::vector<T> data;
+  vec<T> data;
   try {
     H5::Exception::dontPrint();
     auto type = get_datatype_for_hdf5<T>();
@@ -222,5 +209,6 @@ std::vector<T> h5stream::read_vector(const H5std_string& dataset_name)
     H5::FileIException::printErrorStack();
     std::cout << " Error ::FileIException! (Read) " << std::endl;
   }
+
   return data;
 }
