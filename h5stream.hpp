@@ -125,12 +125,12 @@ class h5stream {
   h5stream(const std::string& fileName, const std::string& rw = "rw");
   void setFileName(const H5std_string& fileName, const std::string& rw = "rw");
   template <typename T>
-  void write_vector(const std::vector<T>& data,
+  dspace write_vector(const std::vector<T>& data,
       const H5std_string& datasetName);
   template <typename T>
   std::vector<T> read_vector(const H5std_string& datasetName);
   template <typename T>
-  void read_vector(std::vector<T>& data, const H5std_string& datasetName)
+  dspace read_vector(std::vector<T>& data, const H5std_string& datasetName)
   {
     data = read_vector<T>(datasetName);
   };
@@ -138,8 +138,7 @@ class h5stream {
   double file_size() { return hdf5File.getFileSize() / (1024 * 1024.); }
   dspace get_dataspace(const H5std_string& dataset_name)
   {
-    auto xtr = hdf5File.openDataSet(dataset_name);
-    return dspace(xtr);
+    return dspace(hdf5File.openDataSet(dataset_name));
   }
   //--------------------------------------------------------------
   /*
@@ -180,7 +179,7 @@ h5stream::h5stream(const std::string& fileName, const std::string& rw)
 }
 
 template <typename T>
-void h5stream::write_vector(const std::vector<T>& data,
+dspace h5stream::write_vector(const std::vector<T>& data,
     const H5std_string& datasetName)
 {
   try {
@@ -192,6 +191,7 @@ void h5stream::write_vector(const std::vector<T>& data,
     H5::DataSpace dataspace(RANK, dimsf);
     H5::DataSet dataset = hdf5File.createDataSet(datasetName, type, dataspace);
     dataset.write(data.data(), type);
+    return dspace(dataset);
   }
 
   catch (const H5::FileIException& error) {
