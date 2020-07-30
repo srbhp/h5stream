@@ -92,6 +92,7 @@ inline const H5::PredType& get_datatype_for_hdf5<long double>()
   return H5::PredType::NATIVE_LDOUBLE;
 }
 //---------------------------------------------------------
+namespace h5stream {
 class dspace {
   public:
   H5::DataSet dataset;
@@ -114,8 +115,9 @@ class dspace {
     attribute.read(type, &data);
   }
 };
-
+}
 //----------------------------------------------------------
+namespace h5stream {
 class h5stream {
   public:
   H5std_string hdf5FileName;
@@ -141,8 +143,13 @@ class h5stream {
   {
     return dspace(hdf5File.openDataSet(dataset_name));
   }
+  H5::Group create_group(const H5std_string& group_name)
+  {
+    return hdf5File.createGroup(group_name);
+  }
 };
-void h5stream::setFileName(const H5std_string& fileName,
+}
+void h5stream::h5stream::setFileName(const H5std_string& fileName,
     const std::string& rw)
 {
   hdf5FileName = fileName;
@@ -152,6 +159,8 @@ void h5stream::setFileName(const H5std_string& fileName,
       hdf5File = H5::H5File(fileName, H5F_ACC_RDONLY);
     if (rw == "rw")
       hdf5File = H5::H5File(fileName, H5F_ACC_RDWR);
+    if (rw == "x")
+      hdf5File = H5::H5File(fileName, H5F_ACC_EXCL);
     if (rw == "tr")
       hdf5File = H5::H5File(fileName, H5F_ACC_TRUNC);
   } catch (const H5::FileIException& error) {
@@ -159,15 +168,14 @@ void h5stream::setFileName(const H5std_string& fileName,
     std::cout << " Error ::FileIException! (1 ) " << fileName << std::endl;
   }
 }
-h5stream::h5stream() {}
-
-h5stream::h5stream(const std::string& fileName, const std::string& rw)
+h5stream::h5stream::h5stream() {}
+h5stream::h5stream::h5stream(const std::string& fileName, const std::string& rw)
 {
   setFileName(fileName, rw);
 }
 
 template <typename T, template <typename> class vec>
-dspace h5stream::write(const vec<T>& data, const H5std_string& datasetName)
+h5stream::dspace h5stream::h5stream::write(const vec<T>& data, const H5std_string& datasetName)
 {
   try {
     H5::Exception::dontPrint();
@@ -193,7 +201,7 @@ dspace h5stream::write(const vec<T>& data, const H5std_string& datasetName)
 }
 
 template <typename T, template <typename> class vec>
-vec<T> h5stream::read(const H5std_string& dataset_name)
+vec<T> h5stream::h5stream::read(const H5std_string& dataset_name)
 {
   vec<T> data;
   try {

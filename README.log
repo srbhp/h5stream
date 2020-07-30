@@ -1,0 +1,350 @@
+This is MetaPost, version 2.000 (TeX Live 2017/TeX Live for SUSE Linux) (kpathsea version 6.2.3)  30 JUL 2020 23:19
+**README.md
+(/usr/share/texmf/metapost/base/mpost.mp
+(/usr/share/texmf/metapost/base/plain.mp
+Preloading the plain mem file, version 1.005) ) (./README.md
+>> h5stream
+! Improper subscript has been replaced by zero.
+l.1 # [h5stream]
+                (https://github.com/srbhp/h5stream)
+A bracketed subscript must have a known numeric value;
+unfortunately, what I found was the value that appears just
+above this error message. So I'll try a zero subscript.
+
+>> #0
+! Isolated expression.
+<to be read again> 
+                   (
+l.1 # [h5stream](
+                 https://github.com/srbhp/h5stream)
+I couldn't find an `=' or `:=' after the
+expression that is shown above this error message,
+so I guess I'll just ignore it and carry on.
+
+! Extra tokens will be flushed.
+<to be read again> 
+                   (
+l.1 # [h5stream](
+                 https://github.com/srbhp/h5stream)
+I've just read as much of that statement as I could fathom,
+so a semicolon should have been next. It's very puzzling...
+but I'll try to get myself back together, by ignoring
+everything up to the next `;'. Please insert a semicolon
+now in front of anything that you don't want me to delete.
+(See Chapter 27 of The METAFONTbook for an example.)
+
+! A primary expression can't begin with `write'.
+<inserted text> 
+                0
+<to be read again> 
+                   write
+l.12 Create a vector and write
+                               it to the file
+I'm afraid I need some sort of value in order to continue,
+so I've tentatively inserted `0'. You may want to
+delete this zero and insert something else;
+see Chapter 27 of The METAFONTbook for an example.
+
+>> ```Create.a.vector
+>> 0
+! Not implemented: (unknown numeric)and(known numeric).
+<to be read again> 
+                   write
+l.12 Create a vector and write
+                               it to the file
+I'm afraid I don't know how to apply that operation to that
+combination of types. Continue, and I'll return the second
+argument (see above) as the result of the operation.
+
+>> 0
+! Isolated expression.
+<to be read again> 
+                   write
+l.12 Create a vector and write
+                               it to the file
+I couldn't find an `=' or `:=' after the
+expression that is shown above this error message,
+so I guess I'll just ignore it and carry on.
+
+! Extra tokens will be flushed.
+<to be read again> 
+                   write
+l.12 Create a vector and write
+                               it to the file
+I've just read as much of that statement as I could fathom,
+so a semicolon should have been next. It's very puzzling...
+but I'll try to get myself back together, by ignoring
+everything up to the next `;'. Please insert a semicolon
+now in front of anything that you don't want me to delete.
+(See Chapter 27 of The METAFONTbook for an example.)
+
+>> //Write
+! Isolated expression.
+<to be read again> 
+                   to
+l.16 // Write to
+                 the file
+I couldn't find an `=' or `:=' after the
+expression that is shown above this error message,
+so I guess I'll just ignore it and carry on.
+
+! Extra tokens will be flushed.
+<to be read again> 
+                   to
+l.16 // Write to
+                 the file
+I've just read as much of that statement as I could fathom,
+so a semicolon should have been next. It's very puzzling...
+but I'll try to get myself back together, by ignoring
+everything up to the next `;'. Please insert a semicolon
+now in front of anything that you don't want me to delete.
+(See Chapter 27 of The METAFONTbook for an example.)
+
+>> //
+! Isolated expression.
+<to be read again> 
+                   to
+l.17 ...ite_vector<double>(matrix, "matrix"); //to
+                                                   get the dataspace:  dspac...
+I couldn't find an `=' or `:=' after the
+expression that is shown above this error message,
+so I guess I'll just ignore it and carry on.
+
+! Extra tokens will be flushed.
+<to be read again> 
+                   to
+l.17 ...ite_vector<double>(matrix, "matrix"); //to
+                                                   get the dataspace:  dspac...
+I've just read as much of that statement as I could fathom,
+so a semicolon should have been next. It's very puzzling...
+but I'll try to get myself back together, by ignoring
+everything up to the next `;'. Please insert a semicolon
+now in front of anything that you don't want me to delete.
+(See Chapter 27 of The METAFONTbook for an example.)
+
+>> -double+dspace.write_atr
+! Unknown relation will be considered false.
+<to be read again> 
+                   >
+l.23 dspace.write_atr<double>
+                             (1.2, "Units");
+Oh dear. I can't decide if the expression above is positive,
+negative, or zero. So this comparison test won't be `true'.
+
+>> "Units"
+! Nonnumeric ypart has been replaced by 0.
+<to be read again> 
+                   )
+l.23 dspace.write_atr<double>(1.2, "Units")
+                                           ;
+I've started to scan a pair `(a,b)' or a color `(a,b,c)';
+but after finding a nice `a' I found a `b' that isn't
+of numeric type. So I've changed that part to zero.
+(The b that I didn't like appears above the error message.)
+
+>> false
+>> (1.2,0)
+! Not implemented: (boolean)>(pair).
+<to be read again> 
+                   ;
+l.23 dspace.write_atr<double>(1.2, "Units");
+                                            
+I'm afraid I don't know how to apply that operation to that
+combination of types. Continue, and I'll return the second
+argument (see above) as the result of the operation.
+
+>> (1.2,0)
+! Isolated expression.
+<to be read again> 
+                   ;
+l.23 dspace.write_atr<double>(1.2, "Units");
+                                            
+I couldn't find an `=' or `:=' after the
+expression that is shown above this error message,
+so I guess I'll just ignore it and carry on.
+
+>> file.read_vector-double
+! Unknown relation will be considered false.
+<to be read again> 
+                   >
+l.28 auto xx = file.read_vector<double>
+                                       ("matrix");
+Oh dear. I can't decide if the expression above is positive,
+negative, or zero. So this comparison test won't be `true'.
+
+>> false
+>> "matrix"
+! Not implemented: (boolean)>(string).
+<to be read again> 
+                   ;
+l.28 auto xx = file.read_vector<double>("matrix");
+                                                  
+I'm afraid I don't know how to apply that operation to that
+combination of types. Continue, and I'll return the second
+argument (see above) as the result of the operation.
+
+>> ```Read.data.from.the.file```auto.xx
+>> "matrix"
+! Equation cannot be performed (numeric=string).
+<to be read again> 
+                   ;
+l.28 auto xx = file.read_vector<double>("matrix");
+                                                  
+I'm sorry, but I don't know how to make such things equal.
+(See the two expressions just above the error message.)
+
+>> //OR.file.read_vector-double
+! Unknown relation will be considered false.
+<to be read again> 
+                   >
+l.30 file.read_vector<double>
+                             (xx, "matrix");
+Oh dear. I can't decide if the expression above is positive,
+negative, or zero. So this comparison test won't be `true'.
+
+>> "matrix"
+! Nonnumeric ypart has been replaced by 0.
+<to be read again> 
+                   )
+l.30 file.read_vector<double>(xx, "matrix")
+                                           ;
+I've started to scan a pair `(a,b)' or a color `(a,b,c)';
+but after finding a nice `a' I found a `b' that isn't
+of numeric type. So I've changed that part to zero.
+(The b that I didn't like appears above the error message.)
+
+>> false
+>> (xx,0)
+! Not implemented: (boolean)>(unknown pair).
+<to be read again> 
+                   ;
+l.30 file.read_vector<double>(xx, "matrix");
+                                            
+I'm afraid I don't know how to apply that operation to that
+combination of types. Continue, and I'll return the second
+argument (see above) as the result of the operation.
+
+>> (xx,0)
+! Isolated expression.
+<to be read again> 
+                   ;
+l.30 file.read_vector<double>(xx, "matrix");
+                                            
+I couldn't find an `=' or `:=' after the
+expression that is shown above this error message,
+so I guess I'll just ignore it and carry on.
+
+>> ```Read.Attribute
+! Isolated expression.
+<to be read again> 
+                   (
+l.32 Read Attribute (
+                     Metadata)
+I couldn't find an `=' or `:=' after the
+expression that is shown above this error message,
+so I guess I'll just ignore it and carry on.
+
+! Extra tokens will be flushed.
+<to be read again> 
+                   (
+l.32 Read Attribute (
+                     Metadata)
+I've just read as much of that statement as I could fathom,
+so a semicolon should have been next. It's very puzzling...
+but I'll try to get myself back together, by ignoring
+everything up to the next `;'. Please insert a semicolon
+now in front of anything that you don't want me to delete.
+(See Chapter 27 of The METAFONTbook for an example.)
+
+>> dspace.read_atr-double
+! Unknown relation will be considered false.
+<to be read again> 
+                   >
+l.35   dspace.read_atr<double>
+                              (x, "Units");
+Oh dear. I can't decide if the expression above is positive,
+negative, or zero. So this comparison test won't be `true'.
+
+>> "Units"
+! Nonnumeric ypart has been replaced by 0.
+<to be read again> 
+                   )
+l.35   dspace.read_atr<double>(x, "Units")
+                                          ;
+I've started to scan a pair `(a,b)' or a color `(a,b,c)';
+but after finding a nice `a' I found a `b' that isn't
+of numeric type. So I've changed that part to zero.
+(The b that I didn't like appears above the error message.)
+
+>> false
+>> (x,0)
+! Not implemented: (boolean)>(unknown pair).
+<to be read again> 
+                   ;
+l.35   dspace.read_atr<double>(x, "Units");
+                                           
+I'm afraid I don't know how to apply that operation to that
+combination of types. Continue, and I'll return the second
+argument (see above) as the result of the operation.
+
+>> (x,0)
+! Isolated expression.
+<to be read again> 
+                   ;
+l.35   dspace.read_atr<double>(x, "Units");
+                                           
+I couldn't find an `=' or `:=' after the
+expression that is shown above this error message,
+so I guess I'll just ignore it and carry on.
+
+>> std
+! Isolated expression.
+<to be read again> 
+                   ::
+l.36   std::
+            cout << "Attribute : " << x << std::endl;
+I couldn't find an `=' or `:=' after the
+expression that is shown above this error message,
+so I guess I'll just ignore it and carry on.
+
+! Extra tokens will be flushed.
+<to be read again> 
+                   ::
+l.36   std::
+            cout << "Attribute : " << x << std::endl;
+I've just read as much of that statement as I could fathom,
+so a semicolon should have been next. It's very puzzling...
+but I'll try to get myself back together, by ignoring
+everything up to the next `;'. Please insert a semicolon
+now in front of anything that you don't want me to delete.
+(See Chapter 27 of The METAFONTbook for an example.)
+
+>> std
+! Isolated expression.
+<to be read again> 
+                   ::
+l.37   std::
+            cout << "HDF file size (MB): " << file.file_size() << std::endl;
+I couldn't find an `=' or `:=' after the
+expression that is shown above this error message,
+so I guess I'll just ignore it and carry on.
+
+! Extra tokens will be flushed.
+<to be read again> 
+                   ::
+l.37   std::
+            cout << "HDF file size (MB): " << file.file_size() << std::endl;
+I've just read as much of that statement as I could fathom,
+so a semicolon should have been next. It's very puzzling...
+but I'll try to get myself back together, by ignoring
+everything up to the next `;'. Please insert a semicolon
+now in front of anything that you don't want me to delete.
+(See Chapter 27 of The METAFONTbook for an example.)
+
+)
+! Emergency stop.
+<*> README.md
+             
+*** (job aborted, no legal end found)
+
+
