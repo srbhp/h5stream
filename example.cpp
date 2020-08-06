@@ -12,7 +12,7 @@ int main()
   std::vector<double> matrix { 1, 2, 3282, 932 };
   // Write to the file
   file.create_group("/data");
-  file.write<double, std::vector>(
+  file.write<double>(          //   file.write<double, std::vector>(
       matrix, "/data/matrix"); // Call write_vector
                                //  file.write<double, std::vector>(matrix,
                                //  "/matrix/Mat"); // Call write_vector
@@ -21,7 +21,8 @@ int main()
   dspace.write_atr<double>(1.2, "Units");
 
   // Read data from the file
-  auto xx = file.read<double, std::vector>("/data/matrix");
+  auto xx = file.read<double> // file.read<double, std::vector>
+            ("/data/matrix");
   // OR
   // file.read<double, std::vector>(xx, "matrix");
   // Read Attribute

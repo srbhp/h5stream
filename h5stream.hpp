@@ -17,6 +17,7 @@
 #include "H5Cpp.h"
 #include <iostream>
 #include <string>
+#include <vector>
 //#include <vector>
 
 // Maps C++ type to HDF5 type
@@ -115,7 +116,7 @@ class dspace {
     attribute.read(type, &data);
   }
 };
-}
+} // namespace h5stream
 //----------------------------------------------------------
 namespace h5stream {
 class h5stream {
@@ -124,15 +125,16 @@ class h5stream {
   H5::H5File hdf5File;
 
   h5stream();
-  h5stream(const std::string& fileName, const std::string& rw = "rw");
+  h5stream(const std::string& fileName, const std::string& rw);
+  h5stream(const std::string& fileName);
   void setFileName(const H5std_string& fileName, const std::string& rw = "rw");
-  template <typename T, template <typename> class vec>
+  template <typename T, template <typename> class vec = std::vector>
   dspace write(const vec<T>& data, const H5std_string& datasetName);
 
-  template <typename T, template <typename> class vec>
+  template <typename T, template <typename> class vec = std::vector>
   vec<T> read(const H5std_string& datasetName);
 
-  template <typename T, template <typename> class vec>
+  template <typename T, template <typename> class vec = std::vector>
   void read(vec<T>& data, const H5std_string& datasetName)
   {
     data = read<T, vec>(datasetName);
@@ -148,7 +150,7 @@ class h5stream {
     return hdf5File.createGroup(group_name);
   }
 };
-}
+} // namespace h5stream
 void h5stream::h5stream::setFileName(const H5std_string& fileName,
     const std::string& rw)
 {
@@ -169,13 +171,19 @@ void h5stream::h5stream::setFileName(const H5std_string& fileName,
   }
 }
 h5stream::h5stream::h5stream() {}
-h5stream::h5stream::h5stream(const std::string& fileName, const std::string& rw)
+h5stream::h5stream::h5stream(const std::string& fileName,
+    const std::string& rw)
 {
   setFileName(fileName, rw);
 }
+h5stream::h5stream::h5stream(const std::string& fileName)
+{
+  setFileName(fileName, "tr");
+}
 
 template <typename T, template <typename> class vec>
-h5stream::dspace h5stream::h5stream::write(const vec<T>& data, const H5std_string& datasetName)
+h5stream::dspace h5stream::h5stream::write(const vec<T>& data,
+    const H5std_string& datasetName)
 {
   try {
     H5::Exception::dontPrint();
