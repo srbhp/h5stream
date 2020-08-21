@@ -1,6 +1,10 @@
 # [h5stream](https://github.com/srbhp/h5stream)
 C++ Header only library for simple HDF5 input/output
 
+## How to use 
+
+Just include the `h5stream.hpp` into your your main file.
+
 ### Compile 
 
 ```
@@ -12,9 +16,9 @@ g++ -lhdf5 -lhdf5_cpp -std=c++1z example.cpp
 #### Create File with a mode.
 
 
+- "tr":   Create file, truncate if exists, Default
 - "r":    Readonly, file must exist
 - "rw": Read/write, file must exist
-- "tr":   Create file, truncate if exists, Default
 - "x":   Create file, fail if exists
 
 
@@ -31,8 +35,9 @@ Create a vector and write it to the file
 
 ```
 std::vector<double> matrix { 1, 2, 3282, 932 };
-file.write_vector<double>(matrix, "matrix"); //to get the dataspace:  dspace= file.write_vector
+file.write<double>(matrix, "matrix"); 
 ```
+
 
 #### write and read Metadata
 
@@ -45,17 +50,17 @@ dspace.write_atr<double>(1.2, "Units");
 ```
 
 
-Read data from the file
+#### Read data from the file
 
 
 ```
 auto xx = file.read_vector<double>("matrix");
 //OR
-file.read_vector<double>(xx, "matrix");
+file.read<double>(xx, "matrix");
 ```
 
 
-Read Attribute (Metadata)
+#### Read Attribute (Metadata)
 ```
 double x = 0;
 dspace.read_atr<double>(x, "Units");
