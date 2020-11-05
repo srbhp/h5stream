@@ -1,8 +1,8 @@
 #include "h5stream.hpp"
+#include <array>
 #include <iostream>
 #include <string>
 #include <vector>
-
 int main()
 {
   // Create File
@@ -10,19 +10,20 @@ int main()
 
   // Create a vector
   std::vector<double> matrix { 1, 2, 3282, 932 };
+  std::array<double, 3> a1 { 1, 2, 3 };
+
   // Write to the file
   file.create_group("/data");
-  file.write<double>(          //   file.write<double, std::vector>(
-      matrix, "/data/matrix"); // Call write_vector
-                               //  file.write<double, std::vector>(matrix,
-                               //  "/matrix/Mat"); // Call write_vector
+  file.write<double>("/data/matrix", matrix );
+  file.write<double>("/data/matrix", matrix.data(),matrix.size() );  //file.write<double>(a1, "/data/matrix2");
+
   // Write Attributes( Metadata) to the to the same data space
   auto dspace = file.get_dataspace("/data/matrix");
   dspace.write_atr<double>(1.2, "Units");
 
-  // Read data from the file
-  auto xx = file.read<double> // file.read<double, std::vector>
-            ("/data/matrix");
+  // Read data from the file into an std::vector or std::array
+  std::vector<double> xx;
+  file.read<double>(xx, "/data/matrix");
   // OR
   // file.read<double, std::vector>(xx, "matrix");
   // Read Attribute
