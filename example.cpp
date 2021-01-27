@@ -3,18 +3,18 @@
 #include <iostream>
 #include <string>
 #include <vector>
-int main()
-{
+int main() {
   // Create File
   h5stream::h5stream file("sample.h5", "tr");
 
   // Create a vector
-  std::vector<double> matrix { 1, 2, 3282, 932 };
-  
+  std::vector<double> matrix{1, 2, 3282, 932};
+
   // Write to the file
   file.create_group("/data");
-  file.write<double>("/data/matrix", matrix );
-  file.write<double>("/data/matrix2 ", matrix.data(),matrix.size() ); // Save raw pointer storage 
+  file.write<double>("/data/matrix", matrix);
+  file.write<double>("/data/matrix2 ", matrix.data(),
+                     matrix.size()); // Save raw pointer storage
 
   // Write Attributes( Metadata) to the to the same data space
   auto dspace = file.get_dataspace("/data/matrix");

@@ -67,6 +67,13 @@ template <> inline const H5::PredType &get_datatype_for_hdf5<long double>() {
   return H5::PredType::NATIVE_LDOUBLE;
 }
 //---------------------------------------------------------
+template <typename T> struct h5str1 {
+  std::string keyName;
+  T *data;
+  const unsigned dataSize;
+};
+
+//
 namespace h5stream {
 class dspace {
 public:
@@ -86,8 +93,13 @@ public:
     H5::DataType type = attribute.getDataType();
     attribute.read(type, &data);
   }
+  //----------------------
 };
 } // namespace h5stream
+
+//******************************************************************
+
+// namespace h5stream
 //----------------------------------------------------------
 namespace h5stream {
 class h5stream {
@@ -108,8 +120,9 @@ public:
   void write(const H5std_string &datasetName, const vec<T> &data);
   // Write raw pointer
   template <typename T = double>
-  void write(const H5std_string &datasetName, T *data, unsigned data_size);
-
+  void write(const H5std_string &datasetName, const T *data,
+             unsigned data_size);
+  // Read file
   template <typename T = double, template <typename...> class vec = std::vector>
   vec<T> read(const H5std_string &datasetName);
 
@@ -117,8 +130,11 @@ public:
   void read(vec<T> &data, const H5std_string &datasetName) {
     data = read<T, vec>(datasetName);
   }
-  void close() { hdf5File.close(); }
+  template <typename T = double>
+  void read(const H5std_string &datasetName, const T *data,
+            const unsigned data_size);
 
+  void close() { hdf5File.close(); }
   double file_size() { return hdf5File.getFileSize() / (1024 * 1024.); }
   dspace get_dataspace(const H5std_string &dataset_name) {
     return dspace(hdf5File.openDataSet(dataset_name));
@@ -126,12 +142,26 @@ public:
   H5::Group create_group(const H5std_string &group_name) {
     return hdf5File.createGroup(group_name);
   }
+  //*************************************************
+  // overload << and >>
+  template <typename T>
+  friend h5stream &operator<<(h5stream &out, const h5str1<T> struct1);
+  template <typename T>
+  friend h5stream &operator>>(h5stream &out, const h5str1<T> struct1);
+  //-------------------------------------------------
 };
 } // namespace h5stream
-template <typename T, template <typename...> class vec>
-void h5stream::h5stream::write(const H5std_string &datasetName,
-                               const vec<T> &data) {
-  write(data, datasetName);
+template <typename T>
+h5stream::h5stream &operator<<(h5stream::h5stream &out,
+                               const h5str1<T> struct1) {
+  out.write<T>(struct1.keyName, struct1.data, struct1.dataSize);
+  return out;
+}
+template <typename T>
+h5stream::h5stream &operator>>(h5stream::h5stream &out,
+                               const h5str1<T> struct1) {
+  out.read<T>(struct1.keyName, struct1.data, struct1.dataSize);
+  return out;
 }
 
 void h5stream::h5stream::setFileName(const H5std_string &fileName,
@@ -163,8 +193,10 @@ h5stream::h5stream::h5stream(const std::string &fileName,
 h5stream::h5stream::h5stream(const std::string &fileName) {
   setFileName(fileName, "tr");
 }
+
+// This is the main write function. Other variants call this function.
 template <typename T>
-void h5stream::h5stream::write(const H5std_string &datasetName, T *data,
+void h5stream::h5stream::write(const H5std_string &datasetName, const T *data,
                                unsigned data_size) {
   try {
     H5::Exception::dontPrint();
@@ -187,26 +219,12 @@ void h5stream::h5stream::write(const H5std_string &datasetName, T *data,
 template <typename T, template <typename...> class vec>
 void h5stream::h5stream::write(const vec<T> &data,
                                const H5std_string &datasetName) {
-  try {
-    H5::Exception::dontPrint();
-    const int RANK = 1;
-    auto type = get_datatype_for_hdf5<T>();
-    hsize_t dimsf[1]; // dataset dimensions
-    dimsf[0] = data.size();
-    H5::DataSpace dataspace(RANK, dimsf);
-    H5::DataSet dataset = hdf5File.createDataSet(datasetName, type, dataspace);
-    dataset.write(data.data(), type);
-  }
-
-  catch (const H5::FileIException &error) {
-    // error.printErrorStack();
-    std::cout << " Error ::FileIException! (Write )" << std::endl;
-  }
-
-  catch (const H5::DataSetIException &error) {
-    //    error.printErrorStack();
-    std::cout << " Error ::DataSetIException ! " << std::endl;
-  }
+  write(datasetName, data.data(), data.size());
+}
+template <typename T, template <typename...> class vec>
+void h5stream::h5stream::write(const H5std_string &datasetName,
+                               const vec<T> &data) {
+  write(datasetName, data.data(), data.size());
 }
 
 template <typename T, template <typename...> class vec>
@@ -225,6 +243,26 @@ vec<T> h5stream::h5stream::read(const H5std_string &dataset_name) {
     //    H5::FileIException::printErrorStack();
     std::cout << " Error ::FileIException! (Read) " << std::endl;
   }
-
   return data;
+}
+template <typename T>
+void h5stream::h5stream::read(const H5std_string &datasetName, const T *data,
+                              const unsigned data_size) {
+  try {
+    H5::Exception::dontPrint();
+    auto type = get_datatype_for_hdf5<T>();
+    H5::DataSet dataset = hdf5File.openDataSet(datasetName);
+    H5::DataSpace dataspace = dataset.getSpace();
+    hsize_t dim[1];
+    dataspace.getSimpleExtentDims(dim, NULL);
+    // data.resize(dim[0]);
+    if (dim[0] != data_size) {
+      std::cout << "Error: data from the file dont have the currect size"
+                << std::endl;
+    }
+    dataset.read(data, type, dataspace, dataspace);
+  } catch (...) {
+    //    H5::FileIException::printErrorStack();
+    std::cout << " Error ::FileIException! (Read) " << std::endl;
+  }
 }
