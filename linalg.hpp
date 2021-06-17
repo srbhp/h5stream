@@ -3,9 +3,8 @@
 #include <complex>
 #include <iostream>
 
-
-#include <lapacke.h>
 #include <cblas.h>
+#include <lapacke.h>
 // Uncomment bellow lines if you want to use
 // MKL
 //#define MKL_Complex16 std::complex<double>
@@ -16,64 +15,58 @@
 #include <vector>
 typedef std::vector<double> vec;
 namespace linalg {
-void diag(vec &a, vec &w);
-vec dot(const vec &a , const vec &b , double alpha=1. ) ;
+vec dot(const vec &a, const vec &b, double alpha = 1.);
 std::vector<double> kroneckerDot(const vec &a, const vec &b,
                                  double alpha = 1.0);
-vec add(const vec &a, const vec &b);
 vec id_matrix(int n);
 void disp_matrix(const std::string &st = " ", const vec &mat = vec(0));
 void disp_array(const std::string &st = " ", const vec &a = vec(0));
 std::tuple<vec, vec, vec, vec> nonsys_diag(vec &a);
-void unitary_transform(vec& a, const vec& U);
-double sum(const vec& a);
-} // namespace linalg
-double linalg::sum(const vec& a)
-{
-    double aa { 0 };
-    for (auto& a1 : a) {
-        aa += a1;
-    }
-    return aa;
-}
-void linalg::unitary_transform(vec& a, const vec& eigen_vector)
-{
-    if (a.size() != eigen_vector.size()) {
-        std::cout << "Error :  Matrix sizes are different of Uni.Tran.!"
-                  << std::endl;
-    }
-    unsigned nsize = std::sqrt(eigen_vector.size());
-    vec rho_final(eigen_vector.size());
-    vec rho_tmp(eigen_vector.size());
-
-    cblas_dgemm(CblasRowMajor, CblasTrans, CblasNoTrans, nsize, nsize, nsize, 1.0,
-        eigen_vector.data(), nsize, a.data(), nsize, 0, rho_tmp.data(),
-        nsize);
-
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nsize, nsize, nsize,
-        1.0, rho_tmp.data(), nsize, eigen_vector.data(), nsize, 0,
-        rho_final.data(), nsize);
-
-    a = std::move(rho_final);
-}
-
-
-vec linalg::dot(const vec &a , const vec &b , double alpha ) {
-// This is done for square matrix 
-// TODO: call lapack for large matrix 
-  if (a.size() != b.size() ){
-    std::cout <<"Matrix dont have same size !"<<std::endl ; 
+void unitary_transform(vec &a, const vec &U);
+double sum(const vec &a) {
+  double aa{0};
+  for (auto &a1 : a) {
+    aa += a1;
   }
-unsigned int n = std::sqrt(a.size()) ;
- vec c (n*n, 0 ) ; 
- for(unsigned int i=0 ; i<n ; i++){
-   for(unsigned int j=0 ; j<n ; j++){
-     for(unsigned int k=0 ; k<n ; k++) {
-       c[i*n+k] += alpha *a [i*n+j]*b[j*n+k] ; 
-     }
-   }
- }
- return c ;  
+  return aa;
+};
+} // namespace linalg
+void linalg::unitary_transform(vec &a, const vec &eigen_vector) {
+  if (a.size() != eigen_vector.size()) {
+    std::cout << "Error :  Matrix sizes are different of Uni.Tran.!"
+              << std::endl;
+  }
+  unsigned nsize = std::sqrt(eigen_vector.size());
+  vec rho_final(eigen_vector.size());
+  vec rho_tmp(eigen_vector.size());
+
+  cblas_dgemm(CblasRowMajor, CblasTrans, CblasNoTrans, nsize, nsize, nsize, 1.0,
+              eigen_vector.data(), nsize, a.data(), nsize, 0, rho_tmp.data(),
+              nsize);
+
+  cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nsize, nsize, nsize,
+              1.0, rho_tmp.data(), nsize, eigen_vector.data(), nsize, 0,
+              rho_final.data(), nsize);
+
+  a = std::move(rho_final);
+}
+
+vec linalg::dot(const vec &a, const vec &b, double alpha) {
+  // This is done for square matrix
+  // TODO: call lapack for large matrix
+  if (a.size() != b.size()) {
+    std::cout << "Matrix dont have same size !" << std::endl;
+  }
+  unsigned int n = std::sqrt(a.size());
+  vec c(n * n, 0);
+  for (unsigned int i = 0; i < n; i++) {
+    for (unsigned int j = 0; j < n; j++) {
+      for (unsigned int k = 0; k < n; k++) {
+        c[i * n + k] += alpha * a[i * n + j] * b[j * n + k];
+      }
+    }
+  }
+  return c;
 }
 
 std::tuple<vec, vec, vec, vec> linalg::nonsys_diag(vec &a) {
@@ -150,18 +143,3 @@ void linalg::disp_matrix(const std::string &st, const vec &a) {
     std::cout << std::endl;
   }
 }
-
-void linalg::diag(std::vector<double> &a, std::vector<double> &w) {
-  // devide and conquer
-  if (std::sqrt(a.size()) != w.size()) {
-          std::cout<<"Error: Matrix and eigenbvalue array dont have the currect size"<<std::endl ; 
-  }
-  int n = w.size();
-  int info =
-      LAPACKE_dsyevd(LAPACK_ROW_MAJOR, 'V', 'U', n, a.data(), n, w.data());
-  // int info= LAPACKE_dsyev( LAPACK_ROW_MAJOR, 'V', 'U', n, a, n, w );
-  if (info > 0) {
-    std::cout << "Not able to solve Eigen value problem." << std::endl;
-  }
-}
-

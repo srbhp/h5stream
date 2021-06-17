@@ -1,4 +1,6 @@
 #include "h5stream.hpp"
+
+#include "testfn.hpp"
 #include <array>
 #include <iostream>
 #include <string>
@@ -16,6 +18,7 @@ int main() {
   file.write<double>("/data/matrix2 ", matrix.data(),
                      matrix.size()); // Save raw pointer storage
 
+  testfn();
   // Write Attributes( Metadata) to the to the same data space
   auto dspace = file.get_dataspace("/data/matrix");
   dspace.write_atr<double>(1.2, "Units");
