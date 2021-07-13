@@ -13,6 +13,8 @@
 #include <type_traits>
 #include <vector>
 
+typedef std::vector<double> vec;
+
 template <typename NType1>
 std::ostream &operator<<(std::ostream &out, const std::vector<NType1> &val) {
   for (size_t i = 0; i < val.size(); ++i) {
@@ -101,6 +103,7 @@ public:
   [[nodiscard]] T &at(size_t i) { return this->mat[i]; }
   [[nodiscard]] T at(size_t i) const { return this->mat[i]; }
 
+  [[nodiscard]] size_t size() const { return this->dim; }
   [[nodiscard]] T &operator()(size_t i, size_t j) {
     return this->mat[i * column + j];
   }
@@ -136,7 +139,7 @@ public:
   [[nodiscard]] qmatrix<double> real() const {
     qmatrix<double> result(this->column, this->row,
                            0); // reverse the row and column
-    for (size_t i = 0; i < this->row; i++) {
+    for (size_t i = 0; i < this->dim; i++) {
       result(i) = this->at(i).real();
     }
     return result;
@@ -144,7 +147,7 @@ public:
   [[nodiscard]] qmatrix<double> imag() const {
     qmatrix<double> result(this->column, this->row,
                            0); // reverse the row and column
-    for (size_t i = 0; i < this->row; i++) {
+    for (size_t i = 0; i < this->dim; i++) {
       result(i) = this->at(i).imag();
     }
     return result;
@@ -197,8 +200,8 @@ public:
   //      aa = x;
   //    }
   //  }
-  [[nodiscard]] size_t size() const { return this->column * this->row; }
-  auto data() { return this->mat.data(); }
+  T *data() { return this->mat.data(); }
+  const T *data() const { return this->mat.data(); }
   [[nodiscard]] auto begin() const { return this->mat.begin(); }
   [[nodiscard]] auto end() const { return this->mat.end(); }
   //
@@ -231,18 +234,23 @@ public:
       throw std::runtime_error("qmatrix have different size for operator -\n");
     }
   }
-  [[nodiscard]] qmatrix operator*(qmatrix<T> &rhs) { return this->dot(rhs); }
-  [[nodiscard]] qmatrix dot(qmatrix<T> &rhs) {
+  [[nodiscard]] qmatrix operator*(const qmatrix<T> &rhs) {
+    return this->dot(rhs);
+  }
+  [[nodiscard]] qmatrix<T> dot(const qmatrix<T> &rhs, double talpha = 1.0) {
     if (this->column == rhs.row) {
       qmatrix result(this->row, rhs.column, 0);
       int m = this->row;
       int k = this->column;
       int n = rhs.column;
-      const double alpha = 1;
+      const double alpha = talpha;
       const double beta = 0;
+      const T *p_left = this->data();
+      const T *p_right = rhs.data();
+      T *p_result = result.data();
       if constexpr (std::is_same_v<T, double>) {
         cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, m, n, k, alpha,
-                    this->data(), k, rhs.data(), n, beta, result.data(), n);
+                    p_left, k, p_right, n, beta, p_result, n);
       }
       if constexpr (std::is_same_v<T, std::complex<double>>) {
         cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, m, n, k, &alpha,
@@ -266,13 +274,14 @@ public:
 
     int info = -1;
     if constexpr (std::is_same_v<T, double>) {
-      info = LAPACKE_dsyevd(LAPACK_ROW_MAJOR, 'V', 'U', n, this->data(), n,
+      info = LAPACKE_dsyevd(LAPACK_ROW_MAJOR, 'V', 'U', n, this->mat.data(), n,
                             w.data());
     }
     if constexpr (std::is_same_v<T, std::complex<double>>) {
       info = LAPACKE_zheevd(
           LAPACK_ROW_MAJOR, 'V', 'U', n,
-          reinterpret_cast<__complex__ double *>(this->data()), n, w.data());
+          reinterpret_cast<__complex__ double *>(this->mat.data()), n,
+          w.data());
     }
     // int info= LAPACKE_dsyev( LAPACK_ROW_MAJOR, 'V', 'U', n, a, n, w );
     if (info > 0) {
@@ -286,7 +295,7 @@ public:
       throw std::runtime_error("Error: Matrix is not a square matrix! \n");
     }
     std::vector<T> w(this->row, 0);
-    int n = w.size();
+    size_t n = w.size();
     qmatrix<T> vl(n, n, 0);
     qmatrix<T> vr(n, n, 0);
 
@@ -302,6 +311,20 @@ public:
                         // recast the complex pointer
                         reinterpret_cast<__complex__ double *>(vr.data()), n);
       /* Check for convergence */
+      // Normalize the vectors only for the diagonal elements
+      for (size_t i = 0; i < n; i++) {
+        std::complex<double> aa{0}, aa2{0};
+        for (size_t k = 0; k < n; k++) {
+          aa += std::conj(vl(k, i)) * vr(k, i);
+        }
+        for (size_t k = 0; k < n; k++) {
+          vl(k, i) = vl(k, i) / std::conj(std::sqrt(aa));
+          vr(k, i) = vr(k, i) / (std::sqrt(aa));
+          //  aa2 += std::conj(lv(k, i)) * rv(k, j);
+        }
+        //          std::cout << aa2 << " ";
+        //       std::cout << std::endl;
+      }
       if (info > 0) {
         throw std::runtime_error(
             "The algorithm LAPACKE_zgeev failed to compute eigenvalues.\n");
@@ -340,5 +363,11 @@ public:
       }
     }
     return result;
+  }
+  void unitary_transform(const qmatrix<T> &eigen_vector) {
+    // U^T. x . U
+    // TODO:
+    auto result = eigen_vector.transpose().dot(this->dot(eigen_vector));
+    *this = result;
   }
 };
